@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bó hoa 20/10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Itim&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #36002c;
+    --ink: #fff;
+    --ink-soft: rgba(255,255,255,.72);
+    --key: rgba(38, 10, 34, .82);
+    --key-hover: rgba(70, 24, 62, .9);
+    --pill: rgba(255,255,255,.16);
+    --accent: #f0609b;
+    --light-key: #eedbe8;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Be Vietnam Pro", system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ---------- background ---------- */
+  .bg { position: fixed; inset: 0; overflow: hidden; z-index: 0;
+    background:
+      radial-gradient(120% 60% at 50% -5%, #c23593 0%, rgba(150,30,120,.55) 30%, transparent 62%),
+      radial-gradient(90% 55% at 50% 110%, #9b2c78 0%, rgba(110,20,85,.5) 35%, transparent 70%),
+      linear-gradient(#5a0848, #36002c 45%, #4a0a3c);
+  }
+  .cloud { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .55; animation: drift 26s ease-in-out infinite alternate; }
+  .c1 { width: 46vw; height: 30vh; left: -10vw; top: 2vh; background: #ff7aa8; }
+  .c2 { width: 36vw; height: 26vh; left: 12vw; top: -8vh; background: #f4b1c9; opacity: .35; animation-duration: 32s; }
+  .c3 { width: 50vw; height: 34vh; right: -12vw; bottom: -6vh; background: #ff6f9f; animation-duration: 30s; }
+  .c4 { width: 34vw; height: 22vh; right: 4vw; bottom: 10vh; background: #f6c1d6; opacity: .3; animation-duration: 36s; }
+  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(4vw, 2vh) scale(1.12); } }
+  .grid { position: absolute; inset: 0; opacity: .05;
+    background-image: repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 64px), repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 64px); }
+  .grain { position: absolute; inset: -50%; opacity: .12; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .spark { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: 0; animation: twinkle linear infinite; }
+  @keyframes twinkle { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: .5; } 80% { opacity: .35; } 100% { opacity: 0; transform: translateY(-40px); } }
+
+  .petal { position: absolute; top: -20px; width: 8px; height: 6px; border-radius: 80% 0 80% 0; background: #f9b8d0; opacity: 0;
+    animation: fall linear infinite; pointer-events: none; }
+  @keyframes fall {
+    0% { opacity: 0; transform: translate(0, 0) rotate(0); }
+    10% { opacity: .9; }
+    100% { opacity: .7; transform: translate(var(--dx), 105vh) rotate(var(--rot)); }
+  }
+  #petals { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 1s; }
+  body.result #petals { opacity: 1; }
+
+  /* ---------- close ---------- */
+  .close { position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); z-index: 5; width: 30px; height: 30px; border-radius: 50%; border: 0;
+    background: rgba(255,255,255,.14); color: #fff; font-size: 16px; cursor: pointer; display: grid; place-items: center; }
+  .close:hover { background: rgba(255,255,255,.26); }
+
+  /* ---------- intro ---------- */
+  #intro { position: fixed; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; text-align: center; padding: 16px; transition: opacity .5s; }
+  #intro h1 { font-family: "Itim", cursive; font-weight: 400; font-size: clamp(40px, 9vw, 72px); margin: 0; letter-spacing: .02em; }
+  #intro p { margin: 0 0 10px; color: var(--ink-soft); max-width: 420px; line-height: 1.5; }
+  body:not(.intro) #intro { opacity: 0; pointer-events: none; }
+  body.intro .close, body.intro #app { opacity: 0; pointer-events: none; }
+
+  .btn { font: 600 14px "Be Vietnam Pro", sans-serif; color: #fff; border: 0; border-radius: 999px; padding: 11px 22px; cursor: pointer;
+    background: var(--pill); display: inline-flex; align-items: center; gap: 7px; transition: transform .15s, background .2s; }
+  .btn:hover { background: rgba(255,255,255,.26); }
+  .btn:active { transform: scale(.96); }
+  .btn.primary { background: var(--accent); padding: 11px 30px; }
+  .btn.primary:hover { background: #f477ab; }
+
+  /* ---------- app layout ---------- */
+  #app { position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; transition: opacity .5s; }
+  #stage { flex: 1; min-height: 0; position: relative; }
+  #bouquetWrap { position: absolute; inset: 2vh 0 0; display: flex; justify-content: center;
+    transition: transform 1.1s cubic-bezier(.6,.05,.25,1); transform-origin: 50% 0; }
+  #bouquet { height: 100%; width: auto; max-width: 100%; overflow: visible; }
+  body.result #bouquetWrap { transform: translateY(6vh) scale(.85); }
+
+  #bottom { position: relative; height: var(--bottom-h); flex: none; }
+  :root { --tile-w: min(58px, calc((100vw - 32px - 9 * 6px) / 10)); --tile-h: calc(var(--tile-w) * 1.36); --bottom-h: calc(var(--tile-h) * 3 + 12px + 110px); }
+
+  #typing, #result { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding: 0 max(16px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left, 0px)); transition: opacity .5s, transform .5s; }
+  #result { opacity: 0; pointer-events: none; transform: translateY(16px); text-align: center; gap: 6px; padding-bottom: calc(26px + env(safe-area-inset-bottom)); }
+  body.result #result { opacity: 1; pointer-events: auto; transform: none; transition-delay: .7s; }
+  body.result #typing, body.wrapping #typing { opacity: 0; pointer-events: none; transform: translateY(24px); }
+
+  .head { height: 86px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .head h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .head small { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
+  #nameShow { font-family: "Itim", cursive; font-size: clamp(30px, 6vw, 40px); letter-spacing: .14em; line-height: 1; min-height: 1em; white-space: pre; }
+  #nameShow .ch { display: inline-block; animation: pop .35s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes pop { from { transform: translateY(8px) scale(.4); opacity: 0; } }
+  .head .hint, .head .name { transition: opacity .25s; }
+  .head.has-name .hint { display: none; }
+  .head:not(.has-name) .name { display: none; }
+
+  .kb { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .row { display: flex; gap: 6px; }
+  .key { position: relative; width: var(--tile-w); height: var(--tile-h); border-radius: 7px; border: 1px solid rgba(255,255,255,.06);
+    background: var(--key); cursor: pointer; padding: 0; color: #fff; transition: background .15s, transform .12s; }
+  .key:hover { background: var(--key-hover); }
+  .key:active, .key.hit { transform: scale(.93); background: var(--key-hover); }
+  .key svg { position: absolute; inset: 2px 2px 0; width: calc(100% - 4px); height: calc(100% - 2px); }
+  .key b { position: absolute; left: 6px; bottom: 3px; font: 700 calc(var(--tile-w) * .28) "Be Vietnam Pro", sans-serif; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+  .key.fn { background: var(--light-key); color: #2a0b25; font: 700 calc(var(--tile-w) * .34) "Be Vietnam Pro", sans-serif; }
+  .key.fn:hover { background: #fff; }
+  .key.back { width: calc(var(--tile-w) * 1.3); }
+  .key.ok { width: calc(var(--tile-w) * 1.85); }
+  .key.fn:disabled { opacity: .45; cursor: default; transform: none; background: var(--light-key); }
+
+  #result .to { color: var(--ink-soft); font-size: 14px; }
+  #result .who { font-family: "Itim", cursive; font-size: clamp(34px, 7vw, 44px); line-height: 1.1; }
+  #result .msg { color: var(--ink-soft); font-size: 13.5px; line-height: 1.5; max-width: 560px; margin: 2px 0 10px; }
+  #result .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  /* bouquet internals */
+  .wrap-part { opacity: 0; transition: opacity .6s, transform .8s cubic-bezier(.3,1.3,.5,1); transform-box: fill-box; transform-origin: 50% 100%; transform: scale(.6); }
+  body.wrapped .wrap-part { opacity: 1; transform: none; }
+  #bow { transform-origin: 50% 50%; transition-delay: .35s; }
+  #paperFront { transition-delay: .15s; }
+
+  @media (prefers-reduced-motion: reduce) { .cloud, .spark, .petal { animation: none; } .petal { display: none; } }
+  @media (max-height: 640px) { .head { height: 70px; } :root { --bottom-h: calc(var(--tile-h) * 3 + 12px + 92px); } }
+</style>
+</head>
+<body class="intro">
+<div class="bg" aria-hidden="true">
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="cloud c4"></div>
+  <div class="grid"></div><div class="grain"></div>
+  <div id="sparks"></div>
+</div>
+<div id="petals" aria-hidden="true"></div>
+
+<section id="intro">
+  <h1>20 · 10</h1>
+  <p>Gõ tên một người bạn thương — mỗi chữ cái sẽ thành một cành hoa, gói lại thành bó hoa tặng ngày Phụ nữ Việt Nam.</p>
+  <button class="btn primary" id="start">Kết bó hoa</button>
+</section>
+
+<button class="close" id="close" aria-label="Đóng">✕</button>
+
+<main id="app">
+  <div id="stage">
+    <div id="bouquetWrap">
+      <svg id="bouquet" xmlns="http://www.w3.org/2000/svg" viewBox="-260 -300 520 470" aria-label="Bó hoa">
+        <g transform="translate(0 34)"><g id="paperBack" class="wrap-part">
+          <path d="M-150 -136 Q0 -158 150 -136 L36 -4 L-36 -4 Z" fill="#f9d9e7"/>
+        </g></g>
+        <g id="sprigs"></g>
+        <g transform="translate(0 34)">
+        <g id="paperFront" class="wrap-part">
+          <path d="M-122 -112 Q-60 -126 0 -114 Q60 -126 122 -112 L33 -4 L-33 -4 Z" fill="#f3b5cf"/>
+          <path d="M0 -114 L0 -4 M-62 -118 L-18 -4 M62 -118 L18 -4" stroke="#fbd6e5" stroke-width="1.5" fill="none" opacity=".9"/>
+          <path d="M-33 -4 L33 -4 L56 108 Q0 120 -56 108 Z" fill="#f3b5cf"/>
+          <path d="M-14 0 L-24 110 M14 0 L24 110" stroke="#fbd6e5" stroke-width="1.5" fill="none"/>
+        </g>
+        <g id="bow" class="wrap-part">
+          <path d="M-4 -6 C-30 -34 -64 -22 -60 0 C-57 18 -26 14 -4 0 Z" fill="#e2457f"/>
+          <path d="M4 -6 C30 -34 64 -22 60 0 C57 18 26 14 4 0 Z" fill="#e2457f"/>
+          <path d="M-8 -3 C-26 -20 -46 -14 -46 -2" stroke="#c22a63" stroke-width="2" fill="none"/>
+          <path d="M8 -3 C26 -20 46 -14 46 -2" stroke="#c22a63" stroke-width="2" fill="none"/>
+          <path d="M-6 4 L-26 64 L-15 56 L-9 66 L0 8 Z" fill="#d93774"/>
+          <path d="M6 4 L26 64 L15 56 L9 66 L0 8 Z" fill="#d93774"/>
+          <circle cx="0" cy="-2" r="10" fill="#ea5a8f"/>
+        </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div id="bottom">
+    <section id="typing">
+      <div class="head" id="head">
+        <div class="hint"><h2>Gõ tên của bạn để kết một bó hoa 20/10</h2><small>Mỗi chữ cái là một cành hoa</small></div>
+        <div class="name" id="nameShow"></div>
+      </div>
+      <div class="kb" id="kb"></div>
+    </section>
+
+    <section id="result">
+      <div class="to">Thân tặng bạn:</div>
+      <div class="who" id="who"></div>
+      <div class="msg" id="msg"></div>
+      <div class="actions">
+        <button class="btn" id="again">Kết bó khác</button>
+        <button class="btn" id="download"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Tải ảnh</button>
+        <button class="btn primary" id="done">Đóng</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+/* ===== Lời chúc — sửa tại đây ===== */
+const MESSAGE = "Chúc bạn ngày Phụ nữ Việt Nam thật rạng rỡ, xinh đẹp, hạnh phúc và luôn được yêu thương nha~";
+const MAX_LETTERS = 12;
+
+/* ===== helpers ===== */
+const $ = s => document.querySelector(s);
+const STEM = "#3f9a5a", LEAF = "#4fb26c";
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const f1 = n => +n.toFixed(1);
+function ring(n, len, w, fill, off = 0, extra = "") {
+  let o = "";
+  for (let i = 0; i < n; i++) o += `<ellipse cx="0" cy="${f1(-len / 2)}" rx="${w}" ry="${f1(len / 2)}" fill="${fill}" transform="rotate(${f1(off + i * 360 / n)})"${extra}/>`;
+  return o;
+}
+function star(points, R, r, fill) {
+  let d = "";
+  for (let i = 0; i < points * 2; i++) { const a = Math.PI * i / points - Math.PI / 2, rr = i % 2 ? r : R; d += (i ? "L" : "M") + f1(Math.cos(a) * rr) + " " + f1(Math.sin(a) * rr); }
+  return `<path d="${d}Z" fill="${fill}"/>`;
+}
+function dots(R, n, rad, fill, rand, minDist = 0) {
+  let o = "";
+  for (let i = 0; i < n; i++) { const a = rand() * Math.PI * 2, d = minDist + Math.sqrt(rand()) * (R - minDist); o += `<circle cx="${f1(Math.cos(a) * d)}" cy="${f1(Math.sin(a) * d)}" r="${rad}" fill="${fill}"/>`; }
+  return o;
+}
+
+/* ===== flower heads (drawn upright, origin = top of stem, radius ≈ 14) ===== */
+const H = {
+  daisy: () => ring(14, 14, 2.5, "#fff") + `<circle r="4.2" fill="#f6c443"/><circle r="2" cx="-1" cy="-1" fill="#f9d978"/>`,
+  pinkDaisy: () => ring(12, 15, 3.4, "#f6a0c3") + ring(12, 9, 2.6, "#fbc8dc", 15) + `<circle r="3.4" fill="#fde5ee"/>`,
+  cosmos: () => ring(8, 16, 5.8, "#fde3ed") + ring(8, 10, 3.8, "#f8b6cf", 22) + `<circle r="3.6" fill="#ec5f95"/>`,
+  sunflower: () => ring(18, 17, 2.8, "#f48cb5") + ring(18, 12, 2.3, "#f9b6cf", 10) + `<circle r="6.8" fill="#6b3a22"/><circle r="1" cx="-2" cy="-2" fill="#3e1f10"/><circle r="1" cx="2" cy="1" fill="#3e1f10"/><circle r="1" cx="-1" cy="3" fill="#3e1f10"/><circle r="1" cx="3" cy="-3" fill="#3e1f10"/>`,
+  blossom: c => ring(5, 12, 5, "#fff") + `<circle r="2.6" fill="${c}"/>`,
+  starLily: () => star(6, 15, 5, "#f283b1") + star(6, 9, 3, "#f9a9ca") + `<circle r="2" fill="#fde5ee"/>`,
+  pomWhite: () => { let o = `<circle r="12" fill="#efd9e6"/>`; for (let i = 0; i < 10; i++) { const a = i * 36 * Math.PI / 180; o += `<circle cx="${f1(Math.cos(a) * 8)}" cy="${f1(Math.sin(a) * 8)}" r="4.6" fill="#fff"/>`; } return o + `<circle r="5.5" fill="#fbf2f7"/><circle r="2.5" fill="#efd9e6"/>`; },
+  pomPink: () => `<circle r="12" fill="#f6a7ca"/><circle r="8.5" fill="#f9c0d9"/><path d="M-5 0 A5 5 0 1 1 3 4 A3 3 0 1 1 0 -2" stroke="#f590ba" stroke-width="1.4" fill="none"/>`,
+  ballDots: () => `<circle r="11" fill="#ef77a5"/>` + [[-4, -4], [3, -6], [6, 1], [-1, 2], [-6, 4], [3, 6], [0, -1]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="#ffd3e4"/>`).join(""),
+  tulip: (c, c2) => `<path d="M-9 -1 C-11 -12 -8 -20 -7 -21 L-2.5 -13 L0 -22 L2.5 -13 L7 -21 C8 -20 11 -12 9 -1 Q0 6 -9 -1Z" fill="${c}"/><path d="M-4 -2 C-5 -10 -2 -16 0 -18 C2 -16 5 -10 4 -2 Q0 2 -4 -2Z" fill="${c2}"/>`,
+  bud: () => `<path d="M0 -17 C8 -8 7 2 0 4 C-7 2 -8 -8 0 -17Z" fill="#fff"/><path d="M-5 0 Q-6 4 -1 5 L0 2 L1 5 Q6 4 5 0 Q0 5 -5 0Z" fill="${LEAF}"/>`,
+  rose: () => `<circle r="10.5" fill="#e8538e"/><path d="M-1 -1 A2 2 0 1 1 1.5 1.8 A4.5 4.5 0 1 1 -5 -3.5 A7.5 7.5 0 1 1 4 7" stroke="#f9a4c5" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+  carnation: () => `<path d="M-11 -6 L-13 -14 L-9 -12 L-7 -18 L-3.5 -13 L0 -19 L3.5 -13 L7 -18 L9 -12 L13 -14 L11 -6 Q0 0 -11 -6Z" fill="#f06c9b"/><path d="M-7 -8 L-6 -13 L-3 -10 L0 -14 L3 -10 L6 -13 L7 -8 Q0 -5 -7 -8Z" fill="#f7a0c1"/><path d="M-5 -5 L5 -5 L2.5 4 L-2.5 4Z" fill="${LEAF}"/>`,
+  calla: () => `<path d="M0 4 C-10 -3 -11 -16 -5 -23 C1 -19 8 -17 11 -21 C9 -8 6 -1 0 4Z" fill="#f38bb4"/><path d="M0 2 C-5 -4 -6 -12 -3 -18 C0 -14 4 -13 6 -15 C5 -7 3 -2 0 2Z" fill="#f9b7d0"/><ellipse cx="1" cy="-9" rx="1.6" ry="6" fill="#f7c948" transform="rotate(12 1 -9)"/>`,
+  lilyValley: () => { const bell = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-4 0 Q-4 -6 0 -6 Q4 -6 4 0 L5 2.5 L2.5 1.4 L0 3 L-2.5 1.4 L-5 2.5Z" fill="#fff"/></g>`; return `<path d="M0 0 Q12 -14 24 2" stroke="${STEM}" stroke-width="1.4" fill="none"/><path d="M5 -6 L5 -2 M12 -9 L12 -5 M18 -7 L18 -3 M23 0 L23 3" stroke="${STEM}" stroke-width="1"/>` + bell(5, 2, .8) + bell(12, -1, .95) + bell(18, 1, 1) + bell(23, 7, 1.05) + bell(-2, 3, .7); },
+  umbel: () => { let o = ""; for (let i = 0; i < 9; i++) { const a = (-80 + i * 20) * Math.PI / 180, x = f1(Math.sin(a) * 14), y = f1(-Math.cos(a) * 11 - 2); o += `<line x1="0" y1="2" x2="${x}" y2="${y}" stroke="${STEM}" stroke-width=".9"/><circle cx="${x}" cy="${y - 1.4}" r="2.1" fill="#fff"/><circle cx="${f1(x - 1.6)}" cy="${y + .2}" r="1.6" fill="#fff"/><circle cx="${f1(x + 1.6)}" cy="${y + .2}" r="1.6" fill="#f6eef3"/>`; } return o; },
+  baby: (c, r, rand) => { let o = ""; for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (rand() - .5) * 2.4, d = 6 + rand() * 7, x = f1(Math.cos(a) * d), y = f1(Math.sin(a) * d); o += `<line x1="0" y1="3" x2="${x}" y2="${y}" stroke="${STEM}" stroke-width=".8"/>`; } return o + `<g transform="translate(0 -6)">${dots(11, 16, r, c, rand)}</g>`; },
+  lilac: rand => { let o = ""; for (let i = 0; i < 11; i++) { const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * 11, x = f1(Math.cos(a) * d), y = f1(Math.sin(a) * d * 1.1 - 5); o += `<g transform="translate(${x} ${y}) rotate(${f1(rand() * 90)})">${ring(4, 4.4, 1.7, i % 3 ? "#f8bad3" : "#fde0eb")}<circle r=".9" fill="#e9679b"/></g>`; } return o; },
+  snap: () => { let o = `<path d="M0 6 L0 -40" stroke="${STEM}" stroke-width="1.3"/>`; for (let k = 0; k < 8; k++) { const s = 1 - k * .08, x = k % 2 ? 2.4 : -2.4; o += `<ellipse cx="${f1(x * s)}" cy="${-k * 5}" rx="${f1(3.6 * s)}" ry="${f1(2.8 * s)}" fill="${k % 3 ? "#e85d98" : "#f58dba"}"/>`; } return o + `<ellipse cx="0" cy="-42" rx="1.6" ry="3" fill="#e85d98"/>`; },
+  heather: () => { let o = `<path d="M0 6 L0 -42" stroke="${STEM}" stroke-width="1"/>`; for (let k = 0; k < 11; k++) o += `<circle cx="${k % 2 ? 2 : -2}" cy="${-k * 4}" r="${f1(1.9 - k * .08)}" fill="${k % 3 ? "#f06aa5" : "#f7a6c8"}"/>`; return o; }
+};
+
+const L3 = [[-16, -186, 1], [14, -200, 1], [1, -164, .95]];
+const L2 = [[-11, -196, 1.05], [13, -176, .95]];
+const L5 = [[-20, -176, .8], [-6, -200, .85], [12, -188, .8], [22, -166, .75], [2, -160, .75]];
+const SPIKE = [[-14, -150, 1], [2, -168, 1], [17, -146, .9]];
+
+/* letter → flower */
+const FLOWERS = {
+  Q: { h: L3, d: () => H.daisy() },
+  W: { h: L3, d: (r) => H.baby("#f37fae", 1.9, r) },
+  E: { h: L3, d: (r) => H.baby("#fff", 2.2, r) },
+  R: { h: L3, d: () => H.starLily() },
+  T: { h: L3, d: () => H.blossom("#f3cf62") },
+  Y: { h: L2, d: () => H.pomPink() },
+  U: { h: [[-12, -180, 1.1], [10, -200, 1.15], [18, -168, .5]], d: (r, i) => i === 2 ? H.bud() : H.daisy() },
+  I: { h: SPIKE, d: () => H.snap() },
+  O: { h: L2, d: () => H.pomWhite() },
+  P: { h: L3, d: () => H.pinkDaisy() },
+  A: { h: L3, d: (r) => H.lilac(r) },
+  S: { h: L3, d: () => H.bud() },
+  D: { h: L3, d: () => H.tulip("#f48cb6", "#f9b8d1") },
+  F: { h: L3, d: () => H.umbel() },
+  G: { h: L3, d: () => H.rose() },
+  H: { h: L3, d: () => H.cosmos() },
+  J: { h: L2, d: () => H.ballDots() },
+  K: { h: L3, d: () => H.tulip("#fbf4f8", "#ead6e2") },
+  L: { h: L3, d: () => H.carnation() },
+  Z: { h: L2, d: () => `<g transform="scale(1.2)">${H.daisy()}</g>` },
+  X: { h: SPIKE, d: () => H.heather() },
+  C: { h: [[-12, -176, 1], [6, -194, 1]], d: () => H.lilyValley() },
+  V: { h: L3, d: () => H.calla() },
+  B: { h: L3, d: () => H.blossom("#f5a9c6") },
+  N: { h: L3, d: () => H.sunflower() },
+  M: { h: L5, d: () => H.blossom("#f6e7a1") }
+};
+
+function leaf(x, y, ang, s = 1) {
+  return `<path d="M0 0 Q7 -7 16 -2 Q7 3 0 0Z" fill="${LEAF}" transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(ang)}) scale(${s})"/>`;
+}
+/* builds a sprig: stems + heads. opts.icon = compact layout for keyboard tiles */
+function sprig(letter, seed, icon = false) {
+  const F = FLOWERS[letter], rand = rng(seed * 7919 + letter.charCodeAt(0) * 131);
+  let stems = "", heads = "";
+  const sw = icon ? 1.3 : 1.7;
+  F.h.forEach(([hx, hy, hs], i) => {
+    let x = hx, y = hy, s = hs;
+    if (icon) { x = hx * 1.05; y = hy * .42 + 6; s = hs * .82; }
+    else { const k = .93 + rand() * .12; x *= k * 1.15; y *= k; s *= 1.3; }
+    const sx = icon ? 0 : -x * .2, sy = icon ? 12 : 50;
+    const cx = icon ? x * .25 : x * .12, cy = icon ? -22 : -70;
+    stems += `<path d="M${f1(sx)} ${sy} Q${f1(cx)} ${cy} ${f1(x)} ${f1(y)}" stroke="${STEM}" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;
+    if (i === 0) {
+      const t = icon ? .72 : .55, lx = (1 - t) ** 2 * sx + 2 * (1 - t) * t * cx + t * t * x, ly = (1 - t) ** 2 * sy + 2 * (1 - t) * t * cy + t * t * y;
+      stems += leaf(lx, ly, icon ? 200 : (rand() < .5 ? -20 : 200), icon ? .55 : .9);
+    }
+    heads += `<g transform="translate(${f1(x)} ${f1(y)}) scale(${f1(s)})">${F.d(rand, i)}</g>`;
+  });
+  return stems + heads;
+}
+
+/* ===== keyboard ===== */
+const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+const kb = $("#kb");
+ROWS.forEach((row, ri) => {
+  const r = document.createElement("div"); r.className = "row";
+  for (const ch of row) {
+    const b = document.createElement("button");
+    b.className = "key"; b.dataset.k = ch; b.setAttribute("aria-label", ch);
+    b.innerHTML = `<svg viewBox="-40 -100 80 110" preserveAspectRatio="xMidYMax meet">${sprig(ch, 1, true)}</svg><b>${ch}</b>`;
+    b.onclick = () => press(ch);
+    r.appendChild(b);
+  }
+  if (ri === 2) {
+    r.insertAdjacentHTML("beforeend", `<button class="key fn back" id="backKey" aria-label="Xoá">←</button><button class="key fn ok" id="okKey">OK</button>`);
+  }
+  kb.appendChild(r);
+});
+const backKey = $("#backKey"), okKey = $("#okKey");
+backKey.onclick = () => press("BACK");
+okKey.onclick = () => press("OK");
+
+/* ===== bouquet state + animation ===== */
+const sprigLayer = $("#sprigs");
+let name = "";             // typed text (letters + spaces)
+let items = [];            // { el, cur, target, scale }
+let mode = "intro";
+
+function layout() {
+  const n = items.length;
+  const spread = n > 1 ? Math.min(78, 15 * (n - 1)) : 0;
+  items.forEach((it, i) => { it.target = n > 1 ? -spread / 2 + i * spread / (n - 1) : 0; });
+}
+function addSprig(letter) {
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.innerHTML = sprig(letter, items.length + 3);
+  sprigLayer.appendChild(g);
+  const n = items.length;
+  items.push({ el: g, cur: n ? items[n - 1].cur : 0, target: 0, scale: .15, alpha: 0 });
+  layout(); kick();
+}
+function removeSprig() {
+  const it = items.pop(); if (!it) return;
+  it.dying = true; dying.push(it); layout(); kick();
+}
+let dying = [], raf = 0;
+function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+function tick() {
+  raf = 0; let moving = false;
+  for (const it of items) {
+    it.cur += (it.target - it.cur) * .14; it.scale += (1 - it.scale) * .16; it.alpha += (1 - it.alpha) * .2;
+    if (Math.abs(it.target - it.cur) > .05 || 1 - it.scale > .002) moving = true;
+    it.el.setAttribute("transform", `rotate(${it.cur.toFixed(2)}) scale(${it.scale.toFixed(3)})`);
+    it.el.setAttribute("opacity", it.alpha.toFixed(3));
+  }
+  dying = dying.filter(it => {
+    it.scale += (0 - it.scale) * .25; it.alpha -= .12;
+    it.el.setAttribute("transform", `rotate(${it.cur.toFixed(2)}) scale(${Math.max(it.scale, 0).toFixed(3)})`);
+    it.el.setAttribute("opacity", Math.max(it.alpha, 0).toFixed(3));
+    if (it.alpha <= 0) { it.el.remove(); return false; }
+    moving = true; return true;
+  });
+  if (moving) kick();
+}
+
+/* ===== typing ===== */
+const nameShow = $("#nameShow"), head = $("#head");
+function renderName(popLast) {
+  nameShow.innerHTML = "";
+  [...name].forEach((c, i) => {
+    const s = document.createElement("span"); s.className = popLast && i === name.length - 1 ? "ch" : "";
+    s.style.display = "inline-block"; s.textContent = c === " " ? " " : c; nameShow.appendChild(s);
+  });
+  head.classList.toggle("has-name", name.length > 0);
+  const hasLetters = /[A-Z]/.test(name);
+  okKey.disabled = !hasLetters; backKey.disabled = !name.length;
+}
+function letterCount() { return name.replace(/ /g, "").length; }
+function press(k) {
+  if (mode !== "typing") return;
+  if (k === "BACK") {
+    if (!name.length) return;
+    const last = name[name.length - 1]; name = name.slice(0, -1);
+    if (last !== " ") removeSprig();
+    renderName(false);
+  } else if (k === "OK") {
+    if (/[A-Z]/.test(name)) finish();
+  } else if (k === " ") {
+    if (name.length && !name.endsWith(" ")) { name += " "; renderName(true); }
+  } else if (/^[A-Z]$/.test(k) && letterCount() < MAX_LETTERS) {
+    name += k; addSprig(k); renderName(true);
+    const key = kb.querySelector(`[data-k="${k}"]`);
+    if (key) { key.classList.add("hit"); setTimeout(() => key.classList.remove("hit"), 120); }
+  }
+}
+const stripMarks = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (mode === "intro" && e.key === "Enter") { start(); return; }
+  if (mode !== "typing") return;
+  if (e.key === "Backspace") { e.preventDefault(); press("BACK"); }
+  else if (e.key === "Enter") press("OK");
+  else if (e.key === " ") { e.preventDefault(); press(" "); }
+  else if (e.key.length === 1) press(stripMarks(e.key).toUpperCase());
+});
+
+/* ===== flow ===== */
+const titleCase = s => s.trim().toLowerCase().replace(/(^|\s)\S/g, m => m.toUpperCase());
+function setMode(m) {
+  mode = m;
+  document.body.className = m === "intro" ? "intro" : m === "wrapping" ? "wrapping wrapped" : m === "result" ? "result wrapped" : "";
+}
+function reset() {
+  name = ""; items.forEach(it => it.el.remove()); items = []; dying.forEach(it => it.el.remove()); dying = [];
+  renderName(false);
+}
+function start() { reset(); setMode("typing"); }
+function finish() {
+  name = name.trim();
+  $("#who").textContent = titleCase(name);
+  $("#msg").textContent = MESSAGE;
+  setMode("wrapping");
+  setTimeout(() => { if (mode === "wrapping") setMode("result"); }, 650);
+}
+$("#start").onclick = start;
+$("#again").onclick = start;
+$("#done").onclick = () => { setMode("intro"); setTimeout(reset, 500); };
+$("#close").onclick = () => { setMode("intro"); setTimeout(reset, 500); };
+
+/* ===== download ===== */
+// Inside a claude.ai artifact, files are saved through the downloads capability; a plain file opens use a link.
+let downloads = null;
+window.claude?.use?.("downloads").then(d => { downloads = d; }).catch(() => {});
+$("#download").onclick = async () => {
+  const W = 1080, Hh = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = Hh;
+  const c = cv.getContext("2d");
+  let g = c.createLinearGradient(0, 0, 0, Hh); g.addColorStop(0, "#5a0848"); g.addColorStop(.45, "#36002c"); g.addColorStop(1, "#4a0a3c");
+  c.fillStyle = g; c.fillRect(0, 0, W, Hh);
+  const glow = (x, y, r, col) => { const rg = c.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, col); rg.addColorStop(1, "rgba(0,0,0,0)"); c.fillStyle = rg; c.fillRect(0, 0, W, Hh); };
+  glow(W / 2, -80, 760, "rgba(194,53,147,.8)"); glow(120, 160, 420, "rgba(255,122,168,.35)"); glow(W - 80, Hh - 80, 520, "rgba(255,111,159,.35)");
+  // petals
+  const pr = rng(42); c.fillStyle = "rgba(249,184,208,.75)";
+  for (let i = 0; i < 40; i++) { c.save(); c.translate(pr() * W, pr() * Hh); c.rotate(pr() * 6); c.beginPath(); c.ellipse(0, 0, 9, 5, 0, 0, Math.PI * 2); c.fill(); c.restore(); }
+  // bouquet
+  const svg = $("#bouquet").cloneNode(true);
+  svg.setAttribute("width", 900); svg.setAttribute("height", 813);
+  svg.querySelectorAll(".wrap-part").forEach(p => { p.removeAttribute("class"); });
+  const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml" }));
+  const img = new Image();
+  await new Promise((ok, bad) => { img.onload = ok; img.onerror = bad; img.src = url; });
+  c.drawImage(img, (W - 900) / 2, 130, 900, 813); URL.revokeObjectURL(url);
+  // text
+  await document.fonts.ready;
+  c.textAlign = "center"; c.fillStyle = "rgba(255,255,255,.75)"; c.font = "500 34px 'Be Vietnam Pro', sans-serif";
+  c.fillText("Thân tặng bạn:", W / 2, 1000);
+  c.fillStyle = "#fff"; c.font = "96px Itim, cursive"; c.fillText(titleCase(name), W / 2, 1100);
+  c.fillStyle = "rgba(255,255,255,.75)"; c.font = "30px 'Be Vietnam Pro', sans-serif";
+  const words = MESSAGE.split(" "), lines = []; let line = "";
+  for (const w of words) { const t = line ? line + " " + w : w; if (c.measureText(t).width > 860) { lines.push(line); line = w; } else line = t; }
+  lines.push(line); lines.forEach((l, i) => c.fillText(l, W / 2, 1170 + i * 44));
+  c.fillStyle = "rgba(255,255,255,.45)"; c.font = "26px Itim, cursive"; c.fillText("20 · 10", W / 2, Hh - 40);
+  const filename = `bo-hoa-20-10-${stripMarks(name).toLowerCase().replace(/[^a-z0-9]+/g, "-")}.jpg`;
+  if (downloads) {
+    const blob = await new Promise(r => cv.toBlob(r, "image/jpeg", .92));
+    try { await downloads.save({ filename, data: blob }); } catch (e) { /* viewer declined or saving unavailable */ }
+    return;
+  }
+  const a = document.createElement("a");
+  a.download = filename; a.href = cv.toDataURL("image/jpeg", .92); a.click();
+};
+
+/* ===== ambient: sparks + petals ===== */
+(() => {
+  const r = rng(7), sp = $("#sparks"), pe = $("#petals");
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement("i"); d.className = "spark";
+    d.style.cssText = `left:${r() * 100}%;top:${r() * 100}%;animation-duration:${6 + r() * 8}s;animation-delay:${-r() * 12}s;transform:scale(${.5 + r()})`;
+    sp.appendChild(d);
+  }
+  for (let i = 0; i < 34; i++) {
+    const p = document.createElement("i"); p.className = "petal";
+    const s = .6 + r() * .9;
+    p.style.cssText = `left:${r() * 100}%;width:${8 * s}px;height:${6 * s}px;animation-duration:${9 + r() * 9}s;animation-delay:${-r() * 18}s;--dx:${(r() - .3) * 30}vw;--rot:${(r() > .5 ? 1 : -1) * (360 + r() * 360)}deg;background:${r() > .4 ? "#f9b8d0" : "#fde3ec"}`;
+    pe.appendChild(p);
+  }
+})();
+renderName(false);
+</script>
+</body>
+</html>
